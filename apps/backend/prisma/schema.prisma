@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SubscriberTier {
+  FREE
+  PAID
+}
+
+enum SubscriberStatus {
+  PENDING
+  ACTIVE
+  PAST_DUE
+  CHURNED
+}
+
+enum PaymentType {
+  SUBSCRIPTION
+  BUNDLE
+  PER_DEVOTION
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  EXPIRED
+}
+
+enum DeliveryStatus {
+  PENDING
+  SENT
+  FAILED
+  SKIPPED
+}
+
+model AdminUser {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Subscriber {
+  id                 String           @id @default(uuid())
+  phoneNumber        String           @unique
+  name               String?
+  tier               SubscriberTier   @default(FREE)
+  status             SubscriberStatus @default(PENDING)
+  subscriptionExpiry DateTime?
+  onboardingState    String           @default("NEW")
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  payments          Payment[]
+  deliveryLogs      DeliveryLog[]
+  unlockedDevotions DevotionUnlock[]
+
+  @@index([status])
+  @@index([tier])
+}
+
+model Devotion {
+  id              String   @id @default(uuid())
+  date            DateTime @db.Date
+  verseText       String
+  verseReference  String?
+  sermonText      String
+  songUrl         String
+  scheduledSendAt String
+  isPremiumSermon Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  deliveryLogs DeliveryLog[]
+  unlocks      DevotionUnlock[]
+
+  @@unique([date])
+}
+
+model Payment {
+  id                String        @id @default(uuid())
+  subscriber        Subscriber    @relation(fields: [subscriberId], references: [id])
+  subscriberId      String
+  type              PaymentType
+  amount            Decimal       @db.Decimal(10, 2)
+  currency          String        @default("KES")
+  status            PaymentStatus @default(PENDING)
+  mpesaCheckoutId   String?       @unique
+  mpesaReceiptNo    String?
+  relatedDevotionId String?
+  periodStart       DateTime?
+  periodEnd         DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@index([subscriberId])
+  @@index([status])
+}
+
+model DevotionUnlock {
+  id           String     @id @default(uuid())
+  subscriber   Subscriber @relation(fields: [subscriberId], references: [id])
+  subscriberId String
+  devotion     Devotion   @relation(fields: [devotionId], references: [id])
+  devotionId   String
+  paymentId    String?
+  createdAt    DateTime   @default(now())
+
+  @@unique([subscriberId, devotionId])
+}
+
+model DeliveryLog {
+  id           String         @id @default(uuid())
+  devotion     Devotion       @relation(fields: [devotionId], references: [id])
+  devotionId   String
+  subscriber   Subscriber     @relation(fields: [subscriberId], references: [id])
+  subscriberId String
+  status       DeliveryStatus @default(PENDING)
+  contentTier  SubscriberTier
+  errorMessage String?
+  sentAt       DateTime?
+  createdAt    DateTime       @default(now())
+
+  @@unique([devotionId, subscriberId])
+  @@index([devotionId])
+}

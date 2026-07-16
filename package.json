@@ -1,0 +1,22 @@
+{
+  "name": "daily-devotion-bot",
+  "private": true,
+  "scripts": {
+    "dev:backend": "pnpm --filter @devotion/backend dev",
+    "dev:frontend": "pnpm --filter @devotion/frontend dev",
+    "dev": "concurrently -n backend,frontend -c blue,green \"pnpm dev:backend\" \"pnpm dev:frontend\"",
+    "build": "pnpm --filter @devotion/shared build && pnpm --filter @devotion/backend build && pnpm --filter @devotion/frontend build",
+    "lint": "pnpm -r lint",
+    "test": "pnpm --filter @devotion/backend test",
+    "prisma:migrate": "pnpm --filter @devotion/backend prisma:migrate",
+    "prisma:seed": "pnpm --filter @devotion/backend prisma:seed",
+    "prisma:generate": "pnpm --filter @devotion/backend prisma:generate"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
