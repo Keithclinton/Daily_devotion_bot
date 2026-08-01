@@ -13,6 +13,7 @@ export const envSchema = z.object({
   WHATSAPP_PROVIDER: z.enum(["mock", "meta"]).default("mock"),
   WHATSAPP_ACCESS_TOKEN: z.string().optional().default(""),
   WHATSAPP_PHONE_NUMBER_ID: z.string().optional().default(""),
+  WHATSAPP_VERIFY_TOKEN: z.string().optional().default(""),
 
   MPESA_PROVIDER: z.enum(["mock", "daraja"]).default("mock"),
   MPESA_CONSUMER_KEY: z.string().optional().default(""),
