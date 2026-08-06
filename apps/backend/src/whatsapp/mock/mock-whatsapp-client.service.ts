@@ -11,4 +11,17 @@ export class MockWhatsappClient implements WhatsappClient {
     this.logger.log(`[WHATSAPP -> ${to}] ${body} (id=${providerMessageId})`);
     return { providerMessageId };
   }
+
+  async sendTemplateMessage(
+    to: string,
+    templateName: string,
+    languageCode: string,
+    bodyParams: string[],
+  ): Promise<SendMessageResult> {
+    const providerMessageId = `mock-${randomUUID()}`;
+    this.logger.log(
+      `[WHATSAPP TEMPLATE -> ${to}] ${templateName} (${languageCode}) params=${JSON.stringify(bodyParams)} (id=${providerMessageId})`,
+    );
+    return { providerMessageId };
+  }
 }

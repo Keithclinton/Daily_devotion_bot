@@ -7,6 +7,10 @@ import { DeliveryStatus, SubscriberTier } from "@devotion/shared";
 
 export type DeliveryOutcome = "SENT" | "FAILED" | "ALREADY_PROCESSED";
 
+const TEMPLATE_LANGUAGE = "en";
+const PREMIUM_TEMPLATE_NAME = "daily_devotion_premium";
+const FREE_TEMPLATE_NAME = "daily_devotion_free";
+
 @Injectable()
 export class DeliveryService {
   private readonly logger = new Logger(DeliveryService.name);
@@ -44,10 +48,15 @@ export class DeliveryService {
       throw error;
     }
 
-    const body = this.buildMessageBody(devotion, entitled);
+    const { templateName, params } = this.buildTemplateParams(devotion, entitled);
 
     try {
-      await this.whatsapp.sendTextMessage(subscriber.phoneNumber, body);
+      await this.whatsapp.sendTemplateMessage(
+        subscriber.phoneNumber,
+        templateName,
+        TEMPLATE_LANGUAGE,
+        params,
+      );
       await this.prisma.deliveryLog.update({
         where: { id: deliveryLogId },
         data: { status: DeliveryStatus.SENT, sentAt: new Date() },
@@ -63,21 +72,21 @@ export class DeliveryService {
     }
   }
 
-  private buildMessageBody(devotion: Devotion, entitled: boolean): string {
+  private buildTemplateParams(
+    devotion: Devotion,
+    entitled: boolean,
+  ): { templateName: string; params: string[] } {
     const verseLine = devotion.verseReference
       ? `${devotion.verseText}\n— ${devotion.verseReference}`
       : devotion.verseText;
 
     if (entitled) {
-      return [verseLine, "", devotion.sermonText, "", `Worship song: ${devotion.songUrl}`].join(
-        "\n",
-      );
+      return {
+        templateName: PREMIUM_TEMPLATE_NAME,
+        params: [verseLine, devotion.sermonText, devotion.songUrl],
+      };
     }
 
-    return [
-      verseLine,
-      "",
-      "Reply UPGRADE to unlock today's full sermon + worship song for premium subscribers.",
-    ].join("\n");
+    return { templateName: FREE_TEMPLATE_NAME, params: [verseLine] };
   }
 }
