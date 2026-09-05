@@ -74,11 +74,11 @@ export function DevotionsPage() {
                   />
                 </label>
                 <label className="text-sm">
-                  Verse reference
+                  Quote attribution
                   <input
                     value={row.verseReference}
                     onChange={(e) => updateRow(i, { verseReference: e.target.value })}
-                    placeholder="John 3:16"
+                    placeholder="John Maxwell"
                     className="mt-1 w-full rounded border border-slate-300 px-2 py-1"
                   />
                 </label>
@@ -88,11 +88,11 @@ export function DevotionsPage() {
                     checked={row.isPremiumSermon}
                     onChange={(e) => updateRow(i, { isPremiumSermon: e.target.checked })}
                   />
-                  Sermon is premium
+                  Insight is premium
                 </label>
               </div>
               <label className="mb-3 block text-sm">
-                Verse text
+                Quote
                 <textarea
                   value={row.verseText}
                   onChange={(e) => updateRow(i, { verseText: e.target.value })}
@@ -101,7 +101,7 @@ export function DevotionsPage() {
                 />
               </label>
               <label className="mb-3 block text-sm">
-                Sermon text
+                Leadership insight
                 <textarea
                   value={row.sermonText}
                   onChange={(e) => updateRow(i, { sermonText: e.target.value })}
@@ -110,7 +110,7 @@ export function DevotionsPage() {
                 />
               </label>
               <label className="block text-sm">
-                Worship song URL
+                Resource link
                 <input
                   value={row.songUrl}
                   onChange={(e) => updateRow(i, { songUrl: e.target.value })}
@@ -131,14 +131,14 @@ export function DevotionsPage() {
       </section>
 
       <section>
-        <h2 className="mb-3 text-lg font-semibold text-slate-800">Upcoming devotions</h2>
+        <h2 className="mb-3 text-lg font-semibold text-slate-800">Upcoming content</h2>
         {devotionsQuery.isLoading && <p className="text-slate-500">Loading...</p>}
         <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
           <table className="min-w-full divide-y divide-slate-200 text-sm">
             <thead>
               <tr className="text-left text-slate-500">
                 <th className="px-3 py-2">Date</th>
-                <th className="px-3 py-2">Verse</th>
+                <th className="px-3 py-2">Quote</th>
                 <th className="px-3 py-2">Send time</th>
                 <th className="px-3 py-2">Premium</th>
               </tr>

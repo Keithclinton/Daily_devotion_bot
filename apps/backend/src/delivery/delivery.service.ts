@@ -8,8 +8,8 @@ import { DeliveryStatus, SubscriberTier } from "@devotion/shared";
 export type DeliveryOutcome = "SENT" | "FAILED" | "ALREADY_PROCESSED";
 
 const TEMPLATE_LANGUAGE = "en";
-const PREMIUM_TEMPLATE_NAME = "daily_devotion_premium";
-const FREE_TEMPLATE_NAME = "daily_devotion_free";
+const PREMIUM_TEMPLATE_NAME = "leadership_nuggets_premium";
+const FREE_TEMPLATE_NAME = "leadership_nuggets_free";
 
 @Injectable()
 export class DeliveryService {
