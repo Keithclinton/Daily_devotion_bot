@@ -25,9 +25,9 @@ export class OnboardingService {
   private welcomeMenuText(): string {
     const price = this.config.get<number>("SUBSCRIPTION_PRICE_KES");
     return [
-      "Welcome to Daily Devotion! ",
-      "Reply 1 for the Free daily verse.",
-      `Reply 2 for Premium (verse + sermon + worship song) — KES ${price}/month via M-Pesa.`,
+      "Welcome to Leadership Nuggets! ",
+      "Reply 1 for the Free daily quote.",
+      `Reply 2 for Premium (quote + leadership insight + resource link) — KES ${price}/month via M-Pesa.`,
     ].join("\n");
   }
 
@@ -66,7 +66,7 @@ export class OnboardingService {
         });
         await this.whatsapp.sendTextMessage(
           phoneNumber,
-          "You're subscribed to the Free daily verse. God bless!",
+          "You're subscribed to the Free daily quote. Let's grow together!",
         );
         return;
       }
@@ -109,6 +109,9 @@ export class OnboardingService {
       where: { id: subscriberId },
       data: { onboardingState: OnboardingState.AWAITING_PAYMENT },
     });
-    await this.whatsapp.sendTextMessage(phoneNumber, `Pay here to activate Premium: ${url}`);
+    const message = url
+      ? `Pay here to activate Premium: ${url}`
+      : "Check your phone for the M-Pesa prompt and enter your PIN to activate Premium.";
+    await this.whatsapp.sendTextMessage(phoneNumber, message);
   }
 }

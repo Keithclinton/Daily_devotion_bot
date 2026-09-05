@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException, Logger } from "@nestjs/common
 import { ConfigService } from "@nestjs/config";
 import { SendMessageResult, WhatsappClient } from "../interfaces/whatsapp-client.interface";
 
-const GRAPH_API_VERSION = "v21.0";
+const GRAPH_API_VERSION = "v25.0";
 
 interface GraphSendResponse {
   messages?: { id: string }[];
@@ -44,9 +44,10 @@ export class MetaWhatsappClient implements WhatsappClient {
   private async send(to: string, messagePayload: Record<string, unknown>): Promise<SendMessageResult> {
     const accessToken = this.config.get<string>("WHATSAPP_ACCESS_TOKEN");
     const phoneNumberId = this.config.get<string>("WHATSAPP_PHONE_NUMBER_ID");
+    const baseUrl = this.config.get<string>("WHATSAPP_API_BASE_URL");
 
     const response = await fetch(
-      `https://graph.facebook.com/${GRAPH_API_VERSION}/${phoneNumberId}/messages`,
+      `${baseUrl}/${GRAPH_API_VERSION}/${phoneNumberId}/messages`,
       {
         method: "POST",
         headers: {

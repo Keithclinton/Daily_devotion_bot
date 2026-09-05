@@ -14,6 +14,10 @@ export const envSchema = z.object({
   WHATSAPP_ACCESS_TOKEN: z.string().optional().default(""),
   WHATSAPP_PHONE_NUMBER_ID: z.string().optional().default(""),
   WHATSAPP_VERIFY_TOKEN: z.string().optional().default(""),
+  WHATSAPP_API_BASE_URL: z.string().default("https://graph.facebook.com"),
+  WHATSAPP_APP_SECRET: z.string().optional().default(""),
+
+  CORS_ORIGIN: z.string().default("http://localhost:5173"),
 
   MPESA_PROVIDER: z.enum(["mock", "daraja"]).default("mock"),
   MPESA_CONSUMER_KEY: z.string().optional().default(""),
@@ -21,6 +25,10 @@ export const envSchema = z.object({
   MPESA_SHORTCODE: z.string().optional().default(""),
   MPESA_PASSKEY: z.string().optional().default(""),
   MPESA_CALLBACK_BASE_URL: z.string().default("http://localhost:3000"),
+  MPESA_API_BASE_URL: z.string().default("https://api.safaricom.co.ke"),
+  MPESA_TRANSACTION_TYPE: z
+    .enum(["CustomerPayBillOnline", "CustomerBuyGoodsOnline"])
+    .default("CustomerPayBillOnline"),
 
   SUBSCRIPTION_PRICE_KES: z.coerce.number().default(200),
   BUNDLE_PRICE_KES: z.coerce.number().default(500),

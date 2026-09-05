@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Post, Query } from "@nestjs/common";
+import { Body, Controller, Get, Post, Query, UseGuards } from "@nestjs/common";
 import { OnboardingService } from "./onboarding.service";
 import { Public } from "../common/decorators/public.decorator";
+import { MetaSignatureGuard } from "../common/guards/meta-signature.guard";
 import { extractInboundMessage, MetaWebhookPayload } from "./meta-webhook.types";
 
 @Controller("webhooks/whatsapp")
@@ -22,6 +23,7 @@ export class WhatsappWebhookController {
   }
 
   @Public()
+  @UseGuards(MetaSignatureGuard)
   @Post()
   async handleInbound(@Body() payload: MetaWebhookPayload) {
     const message = extractInboundMessage(payload);

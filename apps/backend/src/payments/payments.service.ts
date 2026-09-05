@@ -142,12 +142,12 @@ export class PaymentsService {
       const devotion = await this.prisma.devotion.findUnique({ where: { id: devotionId } });
       if (devotion) {
         const body = [
-          "Payment received! Here's your unlocked devotion:",
+          "Payment received! Here's your unlocked content:",
           devotion.verseReference ? `${devotion.verseText}\n— ${devotion.verseReference}` : devotion.verseText,
           "",
           devotion.sermonText,
           "",
-          `Worship song: ${devotion.songUrl}`,
+          `Resource: ${devotion.songUrl}`,
         ].join("\n");
         await this.whatsapp.sendTextMessage(subscriber.phoneNumber, body);
       }
