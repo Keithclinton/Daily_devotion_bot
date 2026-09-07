@@ -73,6 +73,7 @@ model Devotion {
   verseReference  String?
   sermonText      String
   songUrl         String
+  imageUrl        String?
   scheduledSendAt String
   isPremiumSermon Boolean  @default(true)
   createdAt       DateTime @default(now())

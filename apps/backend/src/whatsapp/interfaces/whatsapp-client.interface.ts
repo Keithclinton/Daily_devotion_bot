@@ -9,6 +9,7 @@ export interface WhatsappClient {
     templateName: string,
     languageCode: string,
     bodyParams: string[],
+    headerImageUrl?: string,
   ): Promise<SendMessageResult>;
 }
 

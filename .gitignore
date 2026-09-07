@@ -12,3 +12,4 @@ coverage/
 apps/frontend/vite.config.js
 apps/frontend/vite.config.d.ts
 docker-compose.override.yml
+apps/backend/uploads/

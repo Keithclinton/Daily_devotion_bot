@@ -9,6 +9,7 @@ export function toDevotionDto(devotion: Devotion): DevotionDto {
     verseReference: devotion.verseReference,
     sermonText: devotion.sermonText,
     songUrl: devotion.songUrl,
+    imageUrl: devotion.imageUrl,
     scheduledSendAt: devotion.scheduledSendAt,
     isPremiumSermon: devotion.isPremiumSermon,
     createdAt: devotion.createdAt.toISOString(),

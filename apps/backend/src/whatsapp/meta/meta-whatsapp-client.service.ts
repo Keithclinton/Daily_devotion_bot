@@ -25,18 +25,27 @@ export class MetaWhatsappClient implements WhatsappClient {
     templateName: string,
     languageCode: string,
     bodyParams: string[],
+    headerImageUrl?: string,
   ): Promise<SendMessageResult> {
+    const components: Record<string, unknown>[] = [
+      {
+        type: "body",
+        parameters: bodyParams.map((text) => ({ type: "text", text })),
+      },
+    ];
+    if (headerImageUrl) {
+      components.unshift({
+        type: "header",
+        parameters: [{ type: "image", image: { link: headerImageUrl } }],
+      });
+    }
+
     return this.send(to, {
       type: "template",
       template: {
         name: templateName,
         language: { code: languageCode },
-        components: [
-          {
-            type: "body",
-            parameters: bodyParams.map((text) => ({ type: "text", text })),
-          },
-        ],
+        components,
       },
     });
   }

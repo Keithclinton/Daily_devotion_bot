@@ -18,6 +18,7 @@ export const envSchema = z.object({
   WHATSAPP_APP_SECRET: z.string().optional().default(""),
 
   CORS_ORIGIN: z.string().default("http://localhost:5173"),
+  PUBLIC_BASE_URL: z.string().default("http://localhost:3000"),
 
   MPESA_PROVIDER: z.enum(["mock", "daraja"]).default("mock"),
   MPESA_CONSUMER_KEY: z.string().optional().default(""),

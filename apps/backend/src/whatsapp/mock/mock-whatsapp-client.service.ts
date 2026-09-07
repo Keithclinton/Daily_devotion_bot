@@ -17,10 +17,12 @@ export class MockWhatsappClient implements WhatsappClient {
     templateName: string,
     languageCode: string,
     bodyParams: string[],
+    headerImageUrl?: string,
   ): Promise<SendMessageResult> {
     const providerMessageId = `mock-${randomUUID()}`;
+    const image = headerImageUrl ? ` image=${headerImageUrl}` : "";
     this.logger.log(
-      `[WHATSAPP TEMPLATE -> ${to}] ${templateName} (${languageCode}) params=${JSON.stringify(bodyParams)} (id=${providerMessageId})`,
+      `[WHATSAPP TEMPLATE -> ${to}] ${templateName} (${languageCode}) params=${JSON.stringify(bodyParams)}${image} (id=${providerMessageId})`,
     );
     return { providerMessageId };
   }

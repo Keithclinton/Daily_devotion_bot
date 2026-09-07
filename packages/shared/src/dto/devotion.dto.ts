@@ -10,6 +10,7 @@ export const devotionInputSchema = z.object({
   verseReference: z.string().optional(),
   sermonText: z.string().min(1),
   songUrl: z.string().url(),
+  imageUrl: z.string().url().optional(),
   scheduledSendAt: timeOfDay,
   isPremiumSermon: z.boolean().default(true),
 });
@@ -28,6 +29,7 @@ export interface DevotionDto {
   verseReference: string | null;
   sermonText: string;
   songUrl: string;
+  imageUrl: string | null;
   scheduledSendAt: string;
   isPremiumSermon: boolean;
   createdAt: string;

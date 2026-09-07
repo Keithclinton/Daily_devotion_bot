@@ -1,4 +1,17 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from "@nestjs/common";
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UploadedFile,
+  UseInterceptors,
+} from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
 import { DevotionsService } from "./devotions.service";
 import { ZodValidationPipe } from "../common/pipes/zod-validation.pipe";
 import {
@@ -13,6 +26,15 @@ import {
 @Controller("devotions")
 export class DevotionsController {
   constructor(private readonly devotionsService: DevotionsService) {}
+
+  @Post("upload-image")
+  @UseInterceptors(FileInterceptor("image"))
+  uploadImage(@UploadedFile() file?: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException("No image file provided");
+    }
+    return this.devotionsService.saveUploadedImage(file);
+  }
 
   @Post()
   create(@Body(new ZodValidationPipe(devotionInputSchema)) body: DevotionInput) {

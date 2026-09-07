@@ -17,15 +17,19 @@ function emptyWeek(): DevotionInput[] {
     verseReference: "",
     sermonText: "",
     songUrl: "",
+    imageUrl: "",
     scheduledSendAt: "06:00",
     isPremiumSermon: true,
   }));
 }
 
+type UploadStatus = "idle" | "uploading" | "error";
+
 export function DevotionsPage() {
   const queryClient = useQueryClient();
   const [rows, setRows] = useState<DevotionInput[]>(emptyWeek());
   const [error, setError] = useState<string | null>(null);
+  const [uploadStatus, setUploadStatus] = useState<Record<number, UploadStatus>>({});
 
   const devotionsQuery = useQuery({
     queryKey: ["devotions"],
@@ -37,6 +41,7 @@ export function DevotionsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["devotions"] });
       setRows(emptyWeek());
+      setUploadStatus({});
       setError(null);
     },
     onError: (err) => setError(err instanceof ApiError ? err.message : "Failed to save week"),
@@ -44,6 +49,18 @@ export function DevotionsPage() {
 
   function updateRow(index: number, patch: Partial<DevotionInput>) {
     setRows((prev) => prev.map((row, i) => (i === index ? { ...row, ...patch } : row)));
+  }
+
+  async function handleImageSelected(index: number, file: File | undefined) {
+    if (!file) return;
+    setUploadStatus((prev) => ({ ...prev, [index]: "uploading" }));
+    try {
+      const { url } = await devotionsApi.uploadImage(file);
+      updateRow(index, { imageUrl: url });
+      setUploadStatus((prev) => ({ ...prev, [index]: "idle" }));
+    } catch {
+      setUploadStatus((prev) => ({ ...prev, [index]: "error" }));
+    }
   }
 
   return (
@@ -109,7 +126,7 @@ export function DevotionsPage() {
                   rows={3}
                 />
               </label>
-              <label className="block text-sm">
+              <label className="mb-3 block text-sm">
                 Resource link
                 <input
                   value={row.songUrl}
@@ -118,6 +135,28 @@ export function DevotionsPage() {
                   className="mt-1 w-full rounded border border-slate-300 px-2 py-1"
                 />
               </label>
+              <label className="block text-sm">
+                Image (optional)
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={(e) => handleImageSelected(i, e.target.files?.[0])}
+                  className="mt-1 block w-full text-sm"
+                />
+              </label>
+              {uploadStatus[i] === "uploading" && (
+                <p className="mt-1 text-xs text-slate-500">Uploading...</p>
+              )}
+              {uploadStatus[i] === "error" && (
+                <p className="mt-1 text-xs text-red-600">Upload failed — try again.</p>
+              )}
+              {row.imageUrl && (
+                <img
+                  src={row.imageUrl}
+                  alt="Selected"
+                  className="mt-2 h-20 w-20 rounded border border-slate-200 object-cover"
+                />
+              )}
             </div>
           ))}
         </div>
@@ -139,6 +178,7 @@ export function DevotionsPage() {
               <tr className="text-left text-slate-500">
                 <th className="px-3 py-2">Date</th>
                 <th className="px-3 py-2">Quote</th>
+                <th className="px-3 py-2">Image</th>
                 <th className="px-3 py-2">Send time</th>
                 <th className="px-3 py-2">Premium</th>
               </tr>
@@ -148,6 +188,7 @@ export function DevotionsPage() {
                 <tr key={d.id}>
                   <td className="px-3 py-2">{d.date}</td>
                   <td className="max-w-xs truncate px-3 py-2">{d.verseText}</td>
+                  <td className="px-3 py-2">{d.imageUrl ? "Yes" : "No"}</td>
                   <td className="px-3 py-2">{d.scheduledSendAt}</td>
                   <td className="px-3 py-2">{d.isPremiumSermon ? "Yes" : "No"}</td>
                 </tr>

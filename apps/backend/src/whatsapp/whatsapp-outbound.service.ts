@@ -9,7 +9,13 @@ export class WhatsappOutboundService {
     return this.client.sendTextMessage(to, body);
   }
 
-  sendTemplateMessage(to: string, templateName: string, languageCode: string, bodyParams: string[]) {
-    return this.client.sendTemplateMessage(to, templateName, languageCode, bodyParams);
+  sendTemplateMessage(
+    to: string,
+    templateName: string,
+    languageCode: string,
+    bodyParams: string[],
+    headerImageUrl?: string,
+  ) {
+    return this.client.sendTemplateMessage(to, templateName, languageCode, bodyParams, headerImageUrl);
   }
 }

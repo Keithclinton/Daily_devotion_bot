@@ -43,4 +43,20 @@ export const api = {
   patch: <T>(path: string, body?: unknown) =>
     apiFetch<T>(path, { method: "PATCH", body: body ? JSON.stringify(body) : undefined }),
   delete: <T>(path: string) => apiFetch<T>(path, { method: "DELETE" }),
+  upload: <T>(path: string, file: File, fieldName: string) => {
+    const formData = new FormData();
+    formData.append(fieldName, file);
+    const token = getToken();
+    return fetch(`${API_BASE_URL}${path}`, {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      body: formData,
+    }).then(async (response) => {
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({ message: response.statusText }));
+        throw new ApiError(response.status, body.message ?? "Upload failed");
+      }
+      return response.json() as Promise<T>;
+    });
+  },
 };

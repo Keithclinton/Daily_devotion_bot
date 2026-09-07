@@ -56,6 +56,7 @@ export class DeliveryService {
         templateName,
         TEMPLATE_LANGUAGE,
         params,
+        devotion.imageUrl ?? undefined,
       );
       await this.prisma.deliveryLog.update({
         where: { id: deliveryLogId },

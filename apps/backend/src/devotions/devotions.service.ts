@@ -1,11 +1,39 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { randomUUID } from "crypto";
+import { mkdir, writeFile } from "fs/promises";
+import { join } from "path";
 import { PrismaService } from "../prisma/prisma.service";
 import { DevotionBatchInput, DevotionInput, DevotionUpdateInput } from "@devotion/shared";
 import { parseDateOnly, toDevotionDto } from "./devotions.mapper";
 
+const UPLOAD_DIR = join(process.cwd(), "uploads");
+const ALLOWED_IMAGE_TYPES: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+};
+
 @Injectable()
 export class DevotionsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly config: ConfigService,
+  ) {}
+
+  async saveUploadedImage(file: Express.Multer.File): Promise<{ url: string }> {
+    const extension = ALLOWED_IMAGE_TYPES[file.mimetype];
+    if (!extension) {
+      throw new BadRequestException("Only JPEG, PNG, or WebP images are allowed");
+    }
+
+    await mkdir(UPLOAD_DIR, { recursive: true });
+    const filename = `${randomUUID()}.${extension}`;
+    await writeFile(join(UPLOAD_DIR, filename), file.buffer);
+
+    const baseUrl = this.config.get<string>("PUBLIC_BASE_URL");
+    return { url: `${baseUrl}/uploads/${filename}` };
+  }
 
   async create(input: DevotionInput) {
     const existing = await this.prisma.devotion.findUnique({
@@ -21,6 +49,7 @@ export class DevotionsService {
         verseReference: input.verseReference,
         sermonText: input.sermonText,
         songUrl: input.songUrl,
+        imageUrl: input.imageUrl,
         scheduledSendAt: input.scheduledSendAt,
         isPremiumSermon: input.isPremiumSermon,
       },
@@ -39,6 +68,7 @@ export class DevotionsService {
             verseReference: input.verseReference,
             sermonText: input.sermonText,
             songUrl: input.songUrl,
+            imageUrl: input.imageUrl,
             scheduledSendAt: input.scheduledSendAt,
             isPremiumSermon: input.isPremiumSermon,
           },
@@ -47,6 +77,7 @@ export class DevotionsService {
             verseReference: input.verseReference,
             sermonText: input.sermonText,
             songUrl: input.songUrl,
+            imageUrl: input.imageUrl,
             scheduledSendAt: input.scheduledSendAt,
             isPremiumSermon: input.isPremiumSermon,
           },
