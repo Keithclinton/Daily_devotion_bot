@@ -25,7 +25,7 @@ export class ReportsService {
       this.prisma.payment.findMany({ where, select: { amount: true, createdAt: true } }),
     ]);
 
-    const totalRevenue = payments.reduce((sum, p) => sum + Number(p.amount), 0);
+    const totalRevenue = payments.reduce((sum: number, p: { amount: unknown }) => sum + Number(p.amount), 0);
 
     const byDay = new Map<string, number>();
     for (const payment of payments) {
@@ -35,7 +35,7 @@ export class ReportsService {
 
     return {
       totalRevenue,
-      byType: byType.map((row) => ({
+      byType: byType.map((row: { type: string; _sum: { amount?: unknown | null }; _count: { _all: number } }) => ({
         type: row.type,
         total: Number(row._sum.amount ?? 0),
         count: row._count._all,
@@ -66,6 +66,6 @@ export class ReportsService {
       where: devotionId ? { devotionId } : undefined,
       _count: { _all: true },
     });
-    return rows.map((row) => ({ status: row.status, count: row._count._all }));
+    return rows.map((row: { status: any; _count: { _all: number } }) => ({ status: row.status, count: row._count._all }));
   }
 }

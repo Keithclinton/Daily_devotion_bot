@@ -32,7 +32,7 @@ export class DispatchService {
 
     const limit = pLimit(20);
     const results = await Promise.allSettled(
-      subscribers.map((subscriber) =>
+      subscribers.map((subscriber: any) =>
         limit(() => this.delivery.deliverToSubscriber(devotion, subscriber)),
       ),
     );

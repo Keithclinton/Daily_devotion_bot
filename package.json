@@ -5,7 +5,7 @@
     "dev:backend": "pnpm --filter @devotion/backend dev",
     "dev:frontend": "pnpm --filter @devotion/frontend dev",
     "dev": "concurrently -n backend,frontend -c blue,green \"pnpm dev:backend\" \"pnpm dev:frontend\"",
-    "build": "pnpm --filter @devotion/shared build && pnpm --filter @devotion/backend build && pnpm --filter @devotion/frontend build",
+    "build": "pnpm prisma:generate && pnpm --filter @devotion/shared build && pnpm --filter @devotion/backend build && pnpm --filter @devotion/frontend build",
     "lint": "pnpm -r lint",
     "test": "pnpm --filter @devotion/backend test",
     "prisma:migrate": "pnpm --filter @devotion/backend prisma:migrate",
