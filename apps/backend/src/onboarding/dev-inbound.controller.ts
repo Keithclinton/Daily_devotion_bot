@@ -5,7 +5,7 @@ import { DevSecretGuard } from "../common/guards/dev-secret.guard";
 import { ZodValidationPipe } from "../common/pipes/zod-validation.pipe";
 import { mockInboundMessageSchema, MockInboundMessageInput } from "@devotion/shared";
 
-/** Dev-only: simulates an inbound WhatsApp message without a real Meta webhook call. */
+/** Dev-only simulates an inbound WhatsApp message without a real Meta webhook call. */
 @Controller("dev/mock-whatsapp-inbound")
 export class DevInboundController {
   constructor(private readonly onboardingService: OnboardingService) {}
