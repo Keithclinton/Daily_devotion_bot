@@ -21,12 +21,15 @@ const candidates = [
   join(process.cwd(), "apps", "frontend", "dist"),
   join(process.cwd(), "..", "frontend", "dist"),
   join(__dirname, "..", "..", "frontend", "dist"),
+  join(__dirname, "..", "..", "..", "frontend", "dist"),
 ];
 const rootPath = candidates.find((p) => existsSync(p)) ?? candidates[0];
+// Log the resolved path on startup to aid debugging in CI/CD environments
+console.log("Serving static frontend assets from:", rootPath, "Exists:", existsSync(rootPath));
 
 @Module({
   imports: [
-    ServeStaticModule.forRoot({ rootPath, serveRoot: "/admin" }),
+    ServeStaticModule.forRoot({ rootPath, serveRoot: "/admin", exclude: ["/api/(.*)"] }),
     ConfigModule.forRoot({ isGlobal: true, validate }),
     ScheduleModule.forRoot(),
     PrismaModule,
