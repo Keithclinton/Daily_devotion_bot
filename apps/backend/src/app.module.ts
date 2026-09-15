@@ -18,7 +18,7 @@ import { ReportsModule } from "./reports/reports.module";
 
 @Module({
   imports: [
-    // Resolve frontend dist path at runtime. Try a few common locations so
+    // Resol frontend dist path at runtime. Try a few common locations so
     // serving works both when running from monorepo root and from the
     // compiled package directory in production.
     (() => {
